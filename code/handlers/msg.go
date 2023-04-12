@@ -73,11 +73,43 @@ func replyCard(ctx context.Context,
 	return nil
 }
 
+func replyCardWithBackId(ctx context.Context,
+	msgId *string,
+	cardContent string,
+) (*string, error) {
+	client := initialization.GetLarkClient()
+	resp, err := client.Im.Message.Reply(ctx, larkim.NewReplyMessageReqBuilder().
+		MessageId(*msgId).
+		Body(larkim.NewReplyMessageReqBodyBuilder().
+			MsgType(larkim.MsgTypeInteractive).
+			Uuid(uuid.New().String()).
+			Content(cardContent).
+			Build()).
+		Build())
+
+	// 处理错误
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+
+	// 服务端错误处理
+	if !resp.Success() {
+		fmt.Println(resp.Code, resp.Msg, resp.RequestId())
+		return nil, errors.New(resp.Msg)
+	}
+
+	//ctx = context.WithValue(ctx, "SendMsgId", *resp.Data.MessageId)
+	//SendMsgId := ctx.Value("SendMsgId")
+	//pp.Println(SendMsgId)
+	return resp.Data.MessageId, nil
+}
+
 func newSendCard(header *larkcard.MessageCardHeader, elements ...larkcard.MessageCardElement) (string, error) {
 	config := larkcard.NewMessageCardConfig().
 		WideScreenMode(false).
 		EnableForward(true).
-		UpdateMulti(false).
+		UpdateMulti(true).
 		Build()
 	var aElementPool []larkcard.MessageCardElement
 	for _, element := range elements {
@@ -87,6 +119,26 @@ func newSendCard(header *larkcard.MessageCardHeader, elements ...larkcard.Messag
 	cardContent, err := larkcard.NewMessageCard().
 		Config(config).
 		Header(header).
+		Elements(
+			aElementPool,
+		).
+		String()
+	return cardContent, err
+}
+func newSendCardWithOutHeader(
+	elements ...larkcard.MessageCardElement) (string, error) {
+	config := larkcard.NewMessageCardConfig().
+		WideScreenMode(false).
+		EnableForward(true).
+		UpdateMulti(true).
+		Build()
+	var aElementPool []larkcard.MessageCardElement
+	for _, element := range elements {
+		aElementPool = append(aElementPool, element)
+	}
+	// 卡片消息体
+	cardContent, err := larkcard.NewMessageCard().
+		Config(config).
 		Elements(
 			aElementPool,
 		).
@@ -582,6 +634,38 @@ func sendMsg(ctx context.Context, msg string, chatId *string) error {
 	}
 	return nil
 }
+
+func PatchCard(ctx context.Context, msgId *string,
+	cardContent string) error {
+	//fmt.Println("sendMsg", msg, chatId)
+	client := initialization.GetLarkClient()
+	//content := larkim.NewTextMsgBuilder().
+	//	Text(msg).
+	//	Build()
+
+	//fmt.Println("content", content)
+
+	resp, err := client.Im.Message.Patch(ctx, larkim.NewPatchMessageReqBuilder().
+		MessageId(*msgId).
+		Body(larkim.NewPatchMessageReqBodyBuilder().
+			Content(cardContent).
+			Build()).
+		Build())
+
+	// 处理错误
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	// 服务端错误处理
+	if !resp.Success() {
+		fmt.Println(resp.Code, resp.Msg, resp.RequestId())
+		return errors.New(resp.Msg)
+	}
+	return nil
+}
+
 func sendClearCacheCheckCard(ctx context.Context,
 	sessionId *string, msgId *string) {
 	newCard, _ := newSendCard(
@@ -608,6 +692,39 @@ func sendPicCreateInstructionCard(ctx context.Context,
 		withPicResolutionBtn(sessionId),
 		withNote("提醒：回复文本或图片，让AI生成相关的图片。"))
 	replyCard(ctx, msgId, newCard)
+}
+
+func sendOnProcessCard(ctx context.Context,
+	sessionId *string, msgId *string) (*string, error) {
+	newCard, _ := newSendCardWithOutHeader(
+		withNote("正在思考，请稍等..."))
+	id, err := replyCardWithBackId(ctx, msgId, newCard)
+	if err != nil {
+		return nil, err
+	}
+	return id, nil
+}
+
+func updateTextCard(ctx context.Context, msg string,
+	msgId *string) (*string, error) {
+	newCard, _ := newSendCardWithOutHeader(
+		withMainText(msg),
+		withNote("正在思考，请稍等..."))
+	err := PatchCard(ctx, msgId, newCard)
+	if err != nil {
+		return nil, err
+	}
+	return msgId, nil
+}
+func updateFinalCard(ctx context.Context, msg string,
+	msgId *string) (*string, error) {
+	newCard, _ := newSendCardWithOutHeader(
+		withMainText(msg))
+	err := PatchCard(ctx, msgId, newCard)
+	if err != nil {
+		return nil, err
+	}
+	return msgId, nil
 }
 
 func sendPicModeCheckCard(ctx context.Context,
