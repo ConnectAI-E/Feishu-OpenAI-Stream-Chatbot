@@ -705,26 +705,38 @@ func sendOnProcessCard(ctx context.Context,
 	return id, nil
 }
 
-func updateTextCard(ctx context.Context, msg string,
-	msgId *string) (*string, error) {
-	newCard, _ := newSendCardWithOutHeader(
+func updateNewTextCard(ctx context.Context, msg string,
+	msgId *string) error {
+	newCard, _ := newSendCard(
+		withHeader("👻️ 已开启新的话题", larkcard.TemplateBlue),
 		withMainText(msg),
-		withNote("正在思考，请稍等..."))
+		withNote("正在生成，请稍等..."))
 	err := PatchCard(ctx, msgId, newCard)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	return msgId, nil
+	return nil
+}
+func updateTextCard(ctx context.Context, msg string,
+	msgId *string) error {
+	newCard, _ := newSendCardWithOutHeader(
+		withMainText(msg),
+		withNote("正在生成，请稍等..."))
+	err := PatchCard(ctx, msgId, newCard)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 func updateFinalCard(ctx context.Context, msg string,
-	msgId *string) (*string, error) {
+	msgId *string) error {
 	newCard, _ := newSendCardWithOutHeader(
 		withMainText(msg))
 	err := PatchCard(ctx, msgId, newCard)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	return msgId, nil
+	return nil
 }
 
 func sendPicModeCheckCard(ctx context.Context,

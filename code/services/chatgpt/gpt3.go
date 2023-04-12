@@ -7,6 +7,7 @@ import (
 	"github.com/sashabaranov/go-openai"
 	"io"
 	"start-feishubot/initialization"
+	customOpenai "start-feishubot/services/openai"
 )
 
 type Messages struct {
@@ -27,7 +28,9 @@ func NewGpt3(config *initialization.Config) *ChatGPT {
 	return &ChatGPT{config: config}
 }
 
-func (c *ChatGPT) StreamChat(ctx context.Context, msg []Messages, responseStream chan string) error {
+func (c *ChatGPT) StreamChat(ctx context.Context,
+	msg []customOpenai.Messages,
+	responseStream chan string) error {
 	//change msg type from Messages to openai.ChatCompletionMessage
 	chatMsgs := make([]openai.ChatCompletionMessage, len(msg))
 	for i, m := range msg {
@@ -66,7 +69,6 @@ func (c *ChatGPT) StreamChatWithHistory(ctx context.Context, msg []openai.ChatCo
 	defer stream.Close()
 	for {
 		response, err := stream.Recv()
-		//pp.Println("response: ", response)
 		if errors.Is(err, io.EOF) {
 			//fmt.Println("Stream finished")
 			return nil
@@ -76,7 +78,6 @@ func (c *ChatGPT) StreamChatWithHistory(ctx context.Context, msg []openai.ChatCo
 			return err
 		}
 		responseStream <- response.Choices[0].Delta.Content
-
 	}
 	return nil
 

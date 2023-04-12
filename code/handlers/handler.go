@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"start-feishubot/initialization"
 	"start-feishubot/services"
+	"start-feishubot/services/chatgpt"
 	"start-feishubot/services/openai"
 	"strings"
 
@@ -91,15 +92,15 @@ func (m MessageHandler) msgReceivedHandler(ctx context.Context, event *larkim.P2
 	actions := []Action{
 		&ProcessedUniqueAction{}, //避免重复处理
 		&ProcessMentionAction{},  //判断机器人是否应该被调用
-		&AudioAction{},           //语音处理
 		&EmptyAction{},           //空消息处理
 		&ClearAction{},           //清除消息处理
-		&PicAction{},             //图片处理
 		&RoleListAction{},        //角色列表处理
 		&HelpAction{},            //帮助处理
 		&BalanceAction{},         //余额处理
 		&RolePlayAction{},        //角色扮演处理
-		&MessageAction{},         //消息处理
+		&MessageAction{
+			chatgpt: chatgpt.NewGpt3(&m.config),
+		}, //消息处理
 
 	}
 	chain(data, actions...)
