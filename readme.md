@@ -2,25 +2,13 @@
     <img src='./docs/img3.png' alt='' width='800'/>
 </p>
 
-<details align='center'>
-    <summary> 📷 点击展开完整功能截图</summary>
-    <br>
-    <p align='center'>
-    <img src='https://user-images.githubusercontent.com/50035229/224493411-085ba405-81cd-4972-b87b-74a2e811f23d.png' alt='语音对话' width='800'/>
-    <img src='https://user-images.githubusercontent.com/50035229/223590381-ed38db74-39f3-4e77-bd3a-aaa54d679286.png' alt='角色扮演' width='800'/>
-    <img src='https://user-images.githubusercontent.com/50035229/228092540-bb9c74de-fccb-4d07-9797-f3fe1fb3705a.png' alt='角色列表' width='800'/>
-    <img src='https://user-images.githubusercontent.com/50035229/223590817-37a56eac-ab6e-4293-862a-de0988ac50b7.png' alt='文字成图' width='800'/>
-    <img src='https://user-images.githubusercontent.com/50035229/224531308-378a5bc3-2964-4e32-905f-8237dafc3f91.png' alt='图片变体' width='800'/>
-    <img src='https://user-images.githubusercontent.com/50035229/227900488-10a53176-f4e3-4b9e-bf9e-b60d958aefc8.png' alt='余额查询' width='800'/>
-    <img src='https://user-images.githubusercontent.com/50035229/224531775-3f0e1e1b-a373-4774-a8f0-e120ccba6670.png' alt='帮助菜单' width='800'/>
-    </p>
 
-</details>
+
 
 <br>
 
 <p align='center'>
-   飞书 ×（GPT-3.5 + DALL·E + Whisper）
+   飞书 ×（GPT）+ 打字机效果
 <br>
 <br>
     🚀 Feishu OpenAI 🚀
@@ -29,11 +17,9 @@
 
 ## 👻 机器人功能
 
-🗣 语音交流：私人直接与机器人畅所欲言
+🥖 流式文本输出: 仿真打字机效果，更真实的对话体验
 
 💬 多话题对话：支持私人和群聊多话题讨论，高效连贯
-
-🖼 文本成图：支持文本成图和以图搜图
 
 🛖 场景预设：内置丰富场景列表，一键切换AI角色
 
@@ -45,25 +31,8 @@
 
 📝 富文本卡片：支持富文本卡片回复，信息更丰富多彩
 
-👍 交互式反馈：即时获取机器人处理结果
 
-🎰 余额查询：即时获取token消耗情况
 
-🔙 历史回档：轻松回档历史对话，继续话题讨论 🚧
-
-🔒 管理员模式：内置管理员模式，使用更安全可靠 🚧
-
-🌐 多token负载均衡：优化生产级别的高频调用场景
-
-↩️ 支持反向代理：为不同地区的用户提供更快、更稳定的访问体验
-
-📚 与飞书文档互动：成为企业员工的超级助手 🚧
-
-🎥 话题内容秒转PPT：让你的汇报从此变得更加简单 🚧
-
-📊 表格分析：轻松导入飞书表格，提升数据分析效率 🚧
-
-🍊 私有数据训练：利用公司产品信息对GPT二次训练，更好地满足客户个性化需求 🚧
 
 
 

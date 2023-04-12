@@ -567,38 +567,6 @@ func replayImageCardByBase64(ctx context.Context, base64Str string,
 	return nil
 }
 
-func replayImagePlainByBase64(ctx context.Context, base64Str string,
-	msgId *string) error {
-	imageKey, err := uploadImage(base64Str)
-	if err != nil {
-		return err
-	}
-	//example := "img_v2_041b28e3-5680-48c2-9af2-497ace79333g"
-	//imageKey := &example
-	//fmt.Println("imageKey", *imageKey)
-	err = replyImage(ctx, imageKey, msgId)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func replayVariantImageByBase64(ctx context.Context, base64Str string,
-	msgId *string, sessionId *string) error {
-	imageKey, err := uploadImage(base64Str)
-	if err != nil {
-		return err
-	}
-	//example := "img_v2_041b28e3-5680-48c2-9af2-497ace79333g"
-	//imageKey := &example
-	//fmt.Println("imageKey", *imageKey)
-	err = sendVarImageCard(ctx, *imageKey, msgId, sessionId)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
 func sendMsg(ctx context.Context, msg string, chatId *string) error {
 	//fmt.Println("sendMsg", msg, chatId)
 	msg, i := processMessage(msg)
@@ -685,15 +653,6 @@ func sendSystemInstructionCard(ctx context.Context,
 	replyCard(ctx, msgId, newCard)
 }
 
-func sendPicCreateInstructionCard(ctx context.Context,
-	sessionId *string, msgId *string) {
-	newCard, _ := newSendCard(
-		withHeader("🖼️ 已进入图片创作模式", larkcard.TemplateBlue),
-		withPicResolutionBtn(sessionId),
-		withNote("提醒：回复文本或图片，让AI生成相关的图片。"))
-	replyCard(ctx, msgId, newCard)
-}
-
 func sendOnProcessCard(ctx context.Context,
 	sessionId *string, msgId *string) (*string, error) {
 	newCard, _ := newSendCardWithOutHeader(
@@ -705,18 +664,6 @@ func sendOnProcessCard(ctx context.Context,
 	return id, nil
 }
 
-func updateNewTextCard(ctx context.Context, msg string,
-	msgId *string) error {
-	newCard, _ := newSendCard(
-		withHeader("👻️ 已开启新的话题", larkcard.TemplateBlue),
-		withMainText(msg),
-		withNote("正在生成，请稍等..."))
-	err := PatchCard(ctx, msgId, newCard)
-	if err != nil {
-		return err
-	}
-	return nil
-}
 func updateTextCard(ctx context.Context, msg string,
 	msgId *string) error {
 	newCard, _ := newSendCardWithOutHeader(
@@ -739,30 +686,11 @@ func updateFinalCard(ctx context.Context, msg string,
 	return nil
 }
 
-func sendPicModeCheckCard(ctx context.Context,
-	sessionId *string, msgId *string) {
-	newCard, _ := newSendCard(
-		withHeader("🖼️ 机器人提醒", larkcard.TemplateBlue),
-		withMainMd("收到图片，是否进入图片创作模式？"),
-		withNote("请注意，这将开始一个全新的对话，您将无法利用之前话题的历史信息"),
-		withPicModeDoubleCheckBtn(sessionId))
-	replyCard(ctx, msgId, newCard)
-}
-
-func sendNewTopicCard(ctx context.Context,
-	sessionId *string, msgId *string, content string) {
-	newCard, _ := newSendCard(
-		withHeader("👻️ 已开启新的话题", larkcard.TemplateBlue),
-		withMainText(content),
-		withNote("提醒：点击对话框参与回复，可保持话题连贯"))
-	replyCard(ctx, msgId, newCard)
-}
-
 func sendHelpCard(ctx context.Context,
 	sessionId *string, msgId *string) {
 	newCard, _ := newSendCard(
 		withHeader("🎒需要帮助吗？", larkcard.TemplateBlue),
-		withMainMd("**我是小飞机，一款基于chatGpt技术的智能聊天机器人！**"),
+		withMainMd("**我是具备打字机效果的聊天机器人！**"),
 		withSplitLine(),
 		withMdAndExtraBtn(
 			"** 🆑 清除话题上下文**\n文本回复 *清除* 或 */clear*",
@@ -772,22 +700,8 @@ func sendHelpCard(ctx context.Context,
 				"chatType":  UserChatType,
 				"sessionId": *sessionId,
 			}, larkcard.MessageCardButtonTypeDanger)),
-		withSplitLine(),
 		withMainMd("🛖 **内置角色列表** \n"+" 文本回复 *角色列表* 或 */roles*"),
-		withSplitLine(),
 		withMainMd("🥷 **角色扮演模式**\n文本回复*角色扮演* 或 */system*+空格+角色信息"),
-		withSplitLine(),
-		withMainMd("🎤 **AI语音对话**\n私聊模式下直接发送语音"),
-		withSplitLine(),
-		withMainMd("🎨 **图片创作模式**\n回复*图片创作* 或 */picture*"),
-		withSplitLine(),
-		withMainMd("🎰 **Token余额查询**\n回复*余额* 或 */balance*"),
-		withSplitLine(),
-		withMainMd("🔃️ **历史话题回档** 🚧\n"+" 进入话题的回复详情页,文本回复 *恢复* 或 */reload*"),
-		withSplitLine(),
-		withMainMd("📤 **话题内容导出** 🚧\n"+" 文本回复 *导出* 或 */export*"),
-		withSplitLine(),
-		withMainMd("🎰 **连续对话与多话题模式**\n"+" 点击对话框参与回复，可保持话题连贯。同时，单独提问即可开启全新新话题"),
 		withSplitLine(),
 		withMainMd("🎒 **需要更多帮助**\n文本回复 *帮助* 或 */help*"),
 	)
@@ -803,24 +717,6 @@ func sendImageCard(ctx context.Context, imageKey string,
 		withOneBtn(newBtn("再来一张", map[string]interface{}{
 			"value":     question,
 			"kind":      PicTextMoreKind,
-			"chatType":  UserChatType,
-			"msgId":     *msgId,
-			"sessionId": *sessionId,
-		}, larkcard.MessageCardButtonTypePrimary)),
-	)
-	replyCard(ctx, msgId, newCard)
-	return nil
-}
-
-func sendVarImageCard(ctx context.Context, imageKey string,
-	msgId *string, sessionId *string) error {
-	newCard, _ := newSimpleSendCard(
-		withImageDiv(imageKey),
-		withSplitLine(),
-		//再来一张
-		withOneBtn(newBtn("再来一张", map[string]interface{}{
-			"value":     imageKey,
-			"kind":      PicVarMoreKind,
 			"chatType":  UserChatType,
 			"msgId":     *msgId,
 			"sessionId": *sessionId,
