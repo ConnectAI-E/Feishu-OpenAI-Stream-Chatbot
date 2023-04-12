@@ -1,5 +1,5 @@
 <p align='center'>
-    <img src='./docs/img3.png' alt='' width='800'/>
+    <img src='https://user-images.githubusercontent.com/50035229/231599193-5d1dd955-2bcc-421d-86ed-17dfb8dba3fc.gif' alt='' width='800'/>
 </p>
 
 
@@ -32,18 +32,6 @@
 📝 富文本卡片：支持富文本卡片回复，信息更丰富多彩
 
 
-
-
-
-
-## 🌟 项目特点
-
-- 🍏 对话基于 OpenAI-[gpt-3.5-turbo](https://platform.openai.com/account/api-keys) 接口
-- 🍎 通过 lark，将 ChatGPT 接入[飞书](https://open.feishu.cn/app)和[飞书国际版](https://www.larksuite.com/)
-- 🥒
-  支持[Serverless 云函数](https://github.com/serverless-devs/serverless-devs)、[本地环境](https://dashboard.cpolar.com/login)、[Docker](https://www.docker.com/)、[二进制安装包](https://github.com/Leizhenpeng/feishu-chatgpt/releases/)
-  等多种渠道部署
-- 🍋 基于[goCache](https://github.com/patrickmn/go-cache)内存键值对缓存
 
 ## 项目部署
 
