@@ -18,8 +18,7 @@ func (m *MessageAction) Execute(a *ActionInfo) bool {
 	}
 	pp.Println("cardId", cardId)
 
-	updateMsg(a, cardId)
-	return false
+	//updateMsg(a, cardId)
 
 	msg := a.handler.sessionCache.GetMsg(*a.info.sessionId)
 	msg = append(msg, openai.Messages{

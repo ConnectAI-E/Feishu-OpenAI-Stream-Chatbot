@@ -39,6 +39,7 @@ type ChatGPTRequestBody struct {
 	TopP             int        `json:"top_p"`
 	FrequencyPenalty int        `json:"frequency_penalty"`
 	PresencePenalty  int        `json:"presence_penalty"`
+	Stream           bool       `json:"stream" default:"false"`
 }
 
 func (gpt *ChatGPT) Completions(msg []Messages) (resp Messages,

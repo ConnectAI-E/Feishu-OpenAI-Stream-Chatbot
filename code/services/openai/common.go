@@ -47,7 +47,7 @@ const (
 	jsonBody requestBodyType = iota
 	formVoiceDataBody
 	formPictureDataBody
-
+	streamBody
 	nilBody
 )
 
@@ -90,6 +90,7 @@ func (gpt *ChatGPT) doAPIRequestWithRetry(url, method string,
 			return err
 		}
 		requestBodyData = formBody.Bytes()
+
 	case nilBody:
 		requestBodyData = nil
 
@@ -109,6 +110,11 @@ func (gpt *ChatGPT) doAPIRequestWithRetry(url, method string,
 	req.Header.Set("Content-Type", "application/json")
 	if bodyType == formVoiceDataBody || bodyType == formPictureDataBody {
 		req.Header.Set("Content-Type", writer.FormDataContentType())
+	}
+	if bodyType == streamBody {
+		req.Header.Set("Accept", "text/event-stream")
+		req.Header.Set("Connection", "keep-alive")
+		req.Header.Set("Cache-Control", "no-cache")
 	}
 	if gpt.Platform == OpenAI {
 		req.Header.Set("Authorization", "Bearer "+api.Key)
@@ -130,7 +136,7 @@ func (gpt *ChatGPT) doAPIRequestWithRetry(url, method string,
 			fmt.Println("body", string(body))
 
 			gpt.Lb.SetAvailability(api.Key, false)
-			if retry == maxRetries {
+			if retry == maxRetries || bodyType == streamBody {
 				break
 			}
 			time.Sleep(time.Duration(retry+1) * time.Second)
