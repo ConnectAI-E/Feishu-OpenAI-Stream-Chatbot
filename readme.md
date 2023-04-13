@@ -229,56 +229,6 @@ feishu-chatgpt:latest
 
 ---
 
-小白简易化 docker 部署
-- docker 地址: https://hub.docker.com/r/leizhenpeng/feishu-chatgpt
-
-```bash
-docker run -d --restart=always --name feishu-chatgpt2 -p 9000:9000 -v /etc/localtime:/etc/localtim:ro  \
---env APP_ID=xxx \
---env APP_SECRET=xxx \
---env APP_ENCRYPT_KEY=xxx \
---env APP_VERIFICATION_TOKEN=xxx \
---env BOT_NAME=chatGpt \
---env OPENAI_KEY="sk-xxx1,sk-xxx2,sk-xxx3" \
---env API_URL=https://api.openai.com \
---env HTTP_PROXY="" \
-dockerproxy.com/leizhenpeng/feishu-chatgpt:latest
-```
-
-事件回调地址: http://IP:9000/webhook/event
-卡片回调地址: http://IP:9000/webhook/card
-
-把它填入飞书后台
-
---- 
-
-部署azure版本
-
-```bash
-docker build -t feishu-chatgpt:latest .
-docker run -d --name feishu-chatgpt -p 9000:9000 \
---env APP_ID=xxx \
---env APP_SECRET=xxx \
---env APP_ENCRYPT_KEY=xxx \
---env APP_VERIFICATION_TOKEN=xxx \
---env BOT_NAME=chatGpt \
---env AZURE_ON=true \
---env AZURE_API_VERSION=xxx \
---env AZURE_RESOURCE_NAME=xxx \
---env AZURE_DEPLOYMENT_NAME=xxx \
---env AZURE_OPENAI_TOKEN=xxx \
-feishu-chatgpt:latest
-```
-
-注意:
-
-- `BOT_NAME` 为飞书机器人名称，例如 `chatGpt`
-- `AZURE_ON` 为是否使用azure ,请填写 `true`
-- `AZURE_API_VERSION` 为azure api版本 例如 `2023-03-15-preview`
-- `AZURE_RESOURCE_NAME` 为azure 资源名称 类似 `https://{AZURE_RESOURCE_NAME}.openai.azure.com`
-- `AZURE_DEPLOYMENT_NAME` 为azure 部署名称 类似 `https://{AZURE_RESOURCE_NAME}.openai.azure.com/deployments/{AZURE_DEPLOYMENT_NAME}/chat/completions`
-- `AZURE_OPENAI_TOKEN` 为azure openai token
-
 </details>
 
 <details>
@@ -303,19 +253,7 @@ docker compose down
 
 </details>
 
-<details>
-    <summary>二进制安装包部署</summary>
-<br>
 
-1. 进入[release 页面](https://github.com/Leizhenpeng/feishu-chatgpt/releases/) 下载对应的安装包
-2. 解压安装包,修改 config.example.yml 中配置信息,另存为 config.yaml
-3. 目录下添加文件 `role_list.yaml`，自定义角色，可以从这里获取：[链接](https://github.com/Leizhenpeng/feishu-chatgpt/blob/master/code/role_list.yaml)
-3. 运行程序入口文件 `feishu-chatgpt`
-
-事件回调地址: http://IP:9000/webhook/event
-卡片回调地址: http://IP:9000/webhook/card
-
-</details>
 
 ## 详细配置步骤
 
