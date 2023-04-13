@@ -86,7 +86,7 @@ func (m *MessageAction) Execute(a *ActionInfo) bool {
 			}
 			ticker.Stop()
 			msg := append(msg, openai.Messages{
-				Role: "answer", Content: answer,
+				Role: "assistant", Content: answer,
 			})
 			a.handler.sessionCache.SetMsg(*a.info.sessionId, msg)
 			close(chatResponseStream)
