@@ -182,7 +182,7 @@ Railway 是一家国外的 Serverless 平台，支持多种语言，可以一键
 
 点击下方按钮即可创建一个对应的 Railway 项目，其会自动 Fork 本项目到你的 Github 账号下。
 
-[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/template/10D-TF?referralCode=oMcVS2)
+[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/template/c5gX3_?referralCode=oXo6Mc)
 
 #### 2. 配置环境变量
 
@@ -291,7 +291,7 @@ docker compose down
         - `http://xxxx.r6.cpolar.top`为 cpolar 暴露的公网地址
         - `/webhook/card`为统一的应用路由
         - 最终的消息卡片请求网址为 `http://xxxx.r6.cpolar.top/webhook/card`
-    5. 在事件订阅板块，搜索三个词`机器人进群`、 `接收消息`、 `消息已读`, 把他们后面所有的权限全部勾选。
+    5. 在事件订阅板块，搜索三个词`机器人进群`、 `接收消息`、 `消息已读`添加, 并将他们所需权限全部申请开通。
        进入权限管理界面，搜索`图片`, 勾选`获取与上传图片或文件资源`。
        最终会添加下列回调事件
         - im:resource(获取与上传图片或文件资源)
