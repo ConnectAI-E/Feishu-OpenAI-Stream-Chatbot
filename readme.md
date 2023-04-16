@@ -186,7 +186,7 @@ Railway 是一家国外的 Serverless 平台，支持多种语言，可以一键
 
 #### 2. 配置环境变量
 
-在打开的页面中，配置环境变量，每个变量的说明如下图所示：
+在打开的页面中，配置环境变量，PORT/HTTP_PORT 必须设置为 80 ，railway health check 默认检查 80 端口，不支持自定义端口,每个变量的说明如下图所示：
 
 
 <img src='https://user-images.githubusercontent.com/50035229/225005602-88d8678f-9d17-4dc5-8d1e-4abf64fb84fd.png' alt='Railway 环境变量' width='500px'/>
