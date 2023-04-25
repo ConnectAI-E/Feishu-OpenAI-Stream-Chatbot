@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/sashabaranov/go-openai"
 	"io"
+	"log"
 	"start-feishubot/initialization"
 	customOpenai "start-feishubot/services/openai"
 )
@@ -38,6 +39,7 @@ func (c *ChatGPT) StreamChat(ctx context.Context,
 			Role:    m.Role,
 			Content: m.Content,
 		}
+		log.Println("chatMsgs[i]: ", chatMsgs[i])
 	}
 	return c.StreamChatWithHistory(ctx, chatMsgs, 2000,
 		responseStream)

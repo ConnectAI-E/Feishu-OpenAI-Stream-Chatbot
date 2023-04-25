@@ -1,21 +1,24 @@
 version: '3.3'
 services:
   feishu-chatgpt:
-    container_name: feishu-chatgpt
+    container_name: Feishu-OpenAI-Stream-Chatbot
     build:
       context: .
       dockerfile: Dockerfile
     ports:
       - "9000:9000/tcp"
-    # volumes:
-    #   - ./code/config.yaml:/app/config.yaml:ro
+    volumes:
+      # - ./code/config.yaml:/app/config.yaml:ro
+      - ./logs:/logs
     environment:
+      # 日志配置, 默认不开启, 可以开启后查看日志
+      - ENABLE_LOG=false
       - APP_ID=cli_axxx
       - APP_SECRET=xxx
       - APP_ENCRYPT_KEY=xxx
       - APP_VERIFICATION_TOKEN=xxx
       # 请确保和飞书应用管理平台中的设置一致
-      - BOT_NAME=chatGpt
+      - BOT_NAME=xxx
       # OpenAI API Key 支持负载均衡, 可以填写多个 Key 用逗号分隔
       - OPENAI_KEY=sk-xxx,sk-xxx,sk-xxx
       # 服务器配置

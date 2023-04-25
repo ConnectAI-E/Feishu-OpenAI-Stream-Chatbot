@@ -28,31 +28,16 @@ var (
 )
 
 func main() {
-
-	// Set up the logger
-	var logger *lumberjack.Logger
-	logger = &lumberjack.Logger{
-		Filename: "logs/app.log",
-		MaxSize:  100, // megabytes
-		MaxAge:   365, // days
-	}
-	defer utils.CloseLogger(logger)
-
-	fmt.Printf("logger %T\n", logger)
-
-	// Set up the logger to write to both file and console
-	log.SetOutput(io.MultiWriter(logger, os.Stdout))
-	log.SetFlags(log.Ldate | log.Ltime)
-
-	// Write some log messages
-	log.Println("Starting application...")
-
 	initialization.InitRoleList()
 	pflag.Parse()
 	config := initialization.LoadConfig(*cfg)
 	initialization.LoadLarkClient(*config)
 	gpt := openai.NewChatGPT(*config)
 	handlers.InitHandlers(gpt, *config)
+
+	if config.EnableLog {
+		enableLog()
+	}
 
 	eventHandler := dispatcher.NewEventDispatcher(
 		config.FeishuAppVerificationToken, config.FeishuAppEncryptKey).
@@ -82,4 +67,24 @@ func main() {
 		log.Fatalf("failed to start server: %v", err)
 	}
 
+}
+
+func enableLog() {
+	// Set up the logger
+	var logger *lumberjack.Logger
+	logger = &lumberjack.Logger{
+		Filename: "logs/app.log",
+		MaxSize:  100,      // megabytes
+		MaxAge:   365 * 10, // days
+	}
+	defer utils.CloseLogger(logger)
+
+	fmt.Printf("logger %T\n", logger)
+
+	// Set up the logger to write to both file and console
+	log.SetOutput(io.MultiWriter(logger, os.Stdout))
+	log.SetFlags(log.Ldate | log.Ltime)
+
+	// Write some log messages
+	log.Println("Starting application...")
 }

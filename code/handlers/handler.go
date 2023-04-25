@@ -3,6 +3,7 @@ package handlers
 import (
 	"context"
 	"fmt"
+	"log"
 	"start-feishubot/initialization"
 	"start-feishubot/services"
 	"start-feishubot/services/chatgpt"
@@ -102,6 +103,14 @@ func (m MessageHandler) msgReceivedHandler(ctx context.Context, event *larkim.P2
 		}, //消息处理
 
 	}
+
+	// log info before process
+	log.Println("event.Event.Sender.SenderId.UserId: ", event.Event.Sender.SenderId.UserId)
+	log.Println("event.Event.Sender.SenderId.OpenId: ", event.Event.Sender.SenderId.OpenId)
+	log.Println("event.Event.Sender.SenderId.UnionId: ", event.Event.Sender.SenderId.UnionId)
+	log.Println("event.Event.Sender.SenderType: ", event.Event.Sender.SenderType)
+	log.Println("event.Event.Sender.TenantKey: ", event.Event.Sender.TenantKey)
+
 	chain(data, actions...)
 	return nil
 }

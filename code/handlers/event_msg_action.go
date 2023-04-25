@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"github.com/k0kubun/pp/v3"
+	"log"
 	"start-feishubot/services/chatgpt"
 	"start-feishubot/services/openai"
 	"time"
@@ -31,6 +32,7 @@ func (m *MessageAction) Execute(a *ActionInfo) bool {
 	})
 	defer noContentTimeout.Stop()
 	msg := a.handler.sessionCache.GetMsg(*a.info.sessionId)
+	log.Println("request msg: ", msg)
 	msg = append(msg, openai.Messages{
 		Role: "user", Content: a.info.qParsed,
 	})
