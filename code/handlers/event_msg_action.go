@@ -32,7 +32,6 @@ func (m *MessageAction) Execute(a *ActionInfo) bool {
 	})
 	defer noContentTimeout.Stop()
 	msg := a.handler.sessionCache.GetMsg(*a.info.sessionId)
-	log.Println("request msg: ", msg)
 	msg = append(msg, openai.Messages{
 		Role: "user", Content: a.info.qParsed,
 	})
@@ -45,6 +44,8 @@ func (m *MessageAction) Execute(a *ActionInfo) bool {
 				}
 			}
 		}()
+
+		//log.Printf("UserId: %s , Request: %s", a.info.userId, msg)
 
 		if err := m.chatgpt.StreamChat(*a.ctx, msg, chatResponseStream); err != nil {
 			err := updateFinalCard(*a.ctx, "聊天失败", cardId)
@@ -98,6 +99,7 @@ func (m *MessageAction) Execute(a *ActionInfo) bool {
 			//	//updateNewTextCard(*a.ctx, a.info.sessionId, a.info.msgId,
 			//	//	completions.Content)
 			//}
+			log.Printf("UserId: %s , Request: %s , Response: %s", a.info.userId, msg, answer)
 			return false
 		}
 	}

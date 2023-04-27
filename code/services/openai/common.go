@@ -170,27 +170,37 @@ func (gpt *ChatGPT) sendRequestWithBodyType(link, method string,
 	bodyType requestBodyType,
 	requestBody interface{}, responseBody interface{}) error {
 	var err error
-	client := &http.Client{Timeout: 110 * time.Second}
-	if gpt.HttpProxy == "" {
-		err = gpt.doAPIRequestWithRetry(link, method, bodyType,
-			requestBody, responseBody, client, 3)
+	proxyString := gpt.HttpProxy
+
+	client, parseProxyError := GetProxyClient(proxyString)
+	if parseProxyError != nil {
+		return parseProxyError
+	}
+
+	err = gpt.doAPIRequestWithRetry(link, method, bodyType,
+		requestBody, responseBody, client, 3)
+
+	return err
+}
+
+func GetProxyClient(proxyString string) (*http.Client, error) {
+	var client *http.Client
+	if proxyString == "" {
+		client = &http.Client{Timeout: 110 * time.Second}
 	} else {
-		proxyUrl, err := url.Parse(gpt.HttpProxy)
+		proxyUrl, err := url.Parse(proxyString)
 		if err != nil {
-			return err
+			return nil, err
 		}
 		transport := &http.Transport{
 			Proxy: http.ProxyURL(proxyUrl),
 		}
-		proxyClient := &http.Client{
+		client = &http.Client{
 			Transport: transport,
 			Timeout:   110 * time.Second,
 		}
-		err = gpt.doAPIRequestWithRetry(link, method, bodyType,
-			requestBody, responseBody, proxyClient, 3)
 	}
-
-	return err
+	return client, nil
 }
 
 func NewChatGPT(config initialization.Config) *ChatGPT {

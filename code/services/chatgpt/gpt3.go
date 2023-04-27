@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"github.com/sashabaranov/go-openai"
 	"io"
-	"log"
 	"start-feishubot/initialization"
 	customOpenai "start-feishubot/services/openai"
 )
@@ -39,7 +38,6 @@ func (c *ChatGPT) StreamChat(ctx context.Context,
 			Role:    m.Role,
 			Content: m.Content,
 		}
-		log.Println("chatMsgs[i]: ", chatMsgs[i])
 	}
 	return c.StreamChatWithHistory(ctx, chatMsgs, 2000,
 		responseStream)
@@ -50,6 +48,12 @@ func (c *ChatGPT) StreamChatWithHistory(ctx context.Context, msg []openai.ChatCo
 ) error {
 	config := openai.DefaultConfig(c.config.OpenaiApiKeys[0])
 	config.BaseURL = c.config.OpenaiApiUrl + "/v1"
+
+	proxyClient, parseProxyError := customOpenai.GetProxyClient(c.config.HttpProxy)
+	if parseProxyError != nil {
+		return parseProxyError
+	}
+	config.HTTPClient = proxyClient
 
 	client := openai.NewClientWithConfig(config)
 	//pp.Printf("client: %v", client)
