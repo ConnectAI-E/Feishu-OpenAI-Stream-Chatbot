@@ -22,32 +22,28 @@ import (
 	"github.com/larksuite/oapi-sdk-go/v3/event/dispatcher"
 )
 
-var (
-	cfg = pflag.StringP("config", "c", "./config.yaml", "apiserver config file path.")
-)
-
 func main() {
 	initialization.InitRoleList()
 	pflag.Parse()
-	config := initialization.LoadConfig(*cfg)
-	initialization.LoadLarkClient(*config)
-	gpt := openai.NewChatGPT(*config)
-	handlers.InitHandlers(gpt, *config)
+	globalConfig := initialization.GetConfig()
+	initialization.LoadLarkClient(*globalConfig)
+	gpt := openai.NewChatGPT(*globalConfig)
+	handlers.InitHandlers(gpt, *globalConfig)
 
-	if config.EnableLog {
+	if globalConfig.EnableLog {
 		logger := enableLog()
 		defer utils.CloseLogger(logger)
 	}
 
 	eventHandler := dispatcher.NewEventDispatcher(
-		config.FeishuAppVerificationToken, config.FeishuAppEncryptKey).
+		globalConfig.FeishuAppVerificationToken, globalConfig.FeishuAppEncryptKey).
 		OnP2MessageReceiveV1(handlers.Handler).
 		OnP2MessageReadV1(func(ctx context.Context, event *larkim.P2MessageReadV1) error {
 			return handlers.ReadHandler(ctx, event)
 		})
 
 	cardHandler := larkcard.NewCardActionHandler(
-		config.FeishuAppVerificationToken, config.FeishuAppEncryptKey,
+		globalConfig.FeishuAppVerificationToken, globalConfig.FeishuAppEncryptKey,
 		handlers.CardHandler())
 
 	r := gin.Default()
@@ -62,7 +58,7 @@ func main() {
 		sdkginext.NewCardActionHandlerFunc(
 			cardHandler))
 
-	err := initialization.StartServer(*config, r)
+	err := initialization.StartServer(*globalConfig, r)
 	if err != nil {
 		log.Fatalf("failed to start server: %v", err)
 	}
