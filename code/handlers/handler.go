@@ -77,6 +77,7 @@ func (m MessageHandler) msgReceivedHandler(ctx context.Context, event *larkim.P2
 		handlerType: handlerType,
 		msgType:     msgType,
 		msgId:       msgId,
+		userId:      *event.Event.Sender.SenderId.UserId,
 		chatId:      chatId,
 		qParsed:     strings.Trim(parseContent(*content), " "),
 		fileKey:     parseFileKey(*content),
@@ -102,6 +103,7 @@ func (m MessageHandler) msgReceivedHandler(ctx context.Context, event *larkim.P2
 		}, //消息处理
 
 	}
+
 	chain(data, actions...)
 	return nil
 }

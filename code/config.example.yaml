@@ -1,10 +1,12 @@
+# 是否启用日志。
+ENABLE_LOG: true
 #  飞书
 APP_ID: cli_axxx
 APP_SECRET: xxx
 APP_ENCRYPT_KEY: xxx
 APP_VERIFICATION_TOKEN: xxx
-# 请确保和飞书应用管理平台中的设置一致
-BOT_NAME: chatGpt
+# 请确保和飞书应用管理平台中的设置一致。这里建议直接用 Feishu-OpenAI-Stream-Chatbot 作为机器人名称，这样的话，如果你有多个bot就好区分
+BOT_NAME: xxx
 # openAI key 支持负载均衡 可以填写多个key 用逗号分隔
 OPENAI_KEY: sk-xxx,sk-xxx,sk-xxx
 # 服务器配置

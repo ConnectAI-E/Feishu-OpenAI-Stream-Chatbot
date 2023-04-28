@@ -2,13 +2,17 @@ package main
 
 import (
 	"context"
+	"fmt"
+	larkcard "github.com/larksuite/oapi-sdk-go/v3/card"
 	larkim "github.com/larksuite/oapi-sdk-go/v3/service/im/v1"
+	"gopkg.in/natefinch/lumberjack.v2"
+	"io"
 	"log"
+	"os"
 	"start-feishubot/handlers"
 	"start-feishubot/initialization"
 	"start-feishubot/services/openai"
-
-	larkcard "github.com/larksuite/oapi-sdk-go/v3/card"
+	"start-feishubot/utils"
 
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/pflag"
@@ -29,6 +33,11 @@ func main() {
 	initialization.LoadLarkClient(*config)
 	gpt := openai.NewChatGPT(*config)
 	handlers.InitHandlers(gpt, *config)
+
+	if config.EnableLog {
+		logger := enableLog()
+		defer utils.CloseLogger(logger)
+	}
 
 	eventHandler := dispatcher.NewEventDispatcher(
 		config.FeishuAppVerificationToken, config.FeishuAppEncryptKey).
@@ -58,4 +67,26 @@ func main() {
 		log.Fatalf("failed to start server: %v", err)
 	}
 
+}
+
+func enableLog() *lumberjack.Logger {
+	// Set up the logger
+	var logger *lumberjack.Logger
+
+	logger = &lumberjack.Logger{
+		Filename: "logs/app.log",
+		MaxSize:  100,      // megabytes
+		MaxAge:   365 * 10, // days
+	}
+
+	fmt.Printf("logger %T\n", logger)
+
+	// Set up the logger to write to both file and console
+	log.SetOutput(io.MultiWriter(logger, os.Stdout))
+	log.SetFlags(log.Ldate | log.Ltime)
+
+	// Write some log messages
+	log.Println("Starting application...")
+
+	return logger
 }

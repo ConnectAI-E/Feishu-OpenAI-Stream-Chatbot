@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"github.com/k0kubun/pp/v3"
+	"log"
 	"start-feishubot/services/chatgpt"
 	"start-feishubot/services/openai"
 	"time"
@@ -43,6 +44,8 @@ func (m *MessageAction) Execute(a *ActionInfo) bool {
 				}
 			}
 		}()
+
+		//log.Printf("UserId: %s , Request: %s", a.info.userId, msg)
 
 		if err := m.chatgpt.StreamChat(*a.ctx, msg, chatResponseStream); err != nil {
 			err := updateFinalCard(*a.ctx, "聊天失败", cardId)
@@ -96,6 +99,7 @@ func (m *MessageAction) Execute(a *ActionInfo) bool {
 			//	//updateNewTextCard(*a.ctx, a.info.sessionId, a.info.msgId,
 			//	//	completions.Content)
 			//}
+			log.Printf("UserId: %s , Request: %s , Response: %s", a.info.userId, msg, answer)
 			return false
 		}
 	}

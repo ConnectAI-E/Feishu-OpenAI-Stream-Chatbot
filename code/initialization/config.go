@@ -10,6 +10,7 @@ import (
 )
 
 type Config struct {
+	EnableLog                  bool
 	FeishuAppId                string
 	FeishuAppSecret            string
 	FeishuAppEncryptKey        string
@@ -41,6 +42,7 @@ func LoadConfig(cfg string) *Config {
 	//fmt.Println(string(content))
 
 	config := &Config{
+		EnableLog:                  getViperBoolValue("ENABLE_LOG", false),
 		FeishuAppId:                getViperStringValue("APP_ID", ""),
 		FeishuAppSecret:            getViperStringValue("APP_SECRET", ""),
 		FeishuAppEncryptKey:        getViperStringValue("APP_ENCRYPT_KEY", ""),
@@ -72,8 +74,8 @@ func getViperStringValue(key string, defaultValue string) string {
 	return value
 }
 
-//OPENAI_KEY: sk-xxx,sk-xxx,sk-xxx
-//result:[sk-xxx sk-xxx sk-xxx]
+// OPENAI_KEY: sk-xxx,sk-xxx,sk-xxx
+// result:[sk-xxx sk-xxx sk-xxx]
 func getViperStringArray(key string, defaultValue []string) []string {
 	value := viper.GetString(key)
 	if value == "" {
