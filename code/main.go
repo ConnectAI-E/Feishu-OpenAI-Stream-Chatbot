@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	larkcard "github.com/larksuite/oapi-sdk-go/v3/card"
 	larkim "github.com/larksuite/oapi-sdk-go/v3/service/im/v1"
 	"gopkg.in/natefinch/lumberjack.v2"
 	"io"
@@ -12,8 +13,6 @@ import (
 	"start-feishubot/initialization"
 	"start-feishubot/services/openai"
 	"start-feishubot/utils"
-
-	larkcard "github.com/larksuite/oapi-sdk-go/v3/card"
 
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/pflag"
@@ -36,7 +35,8 @@ func main() {
 	handlers.InitHandlers(gpt, *config)
 
 	if config.EnableLog {
-		enableLog()
+		logger := enableLog()
+		defer utils.CloseLogger(logger)
 	}
 
 	eventHandler := dispatcher.NewEventDispatcher(
@@ -69,15 +69,15 @@ func main() {
 
 }
 
-func enableLog() {
+func enableLog() *lumberjack.Logger {
 	// Set up the logger
 	var logger *lumberjack.Logger
+
 	logger = &lumberjack.Logger{
 		Filename: "logs/app.log",
 		MaxSize:  100,      // megabytes
 		MaxAge:   365 * 10, // days
 	}
-	defer utils.CloseLogger(logger)
 
 	fmt.Printf("logger %T\n", logger)
 
@@ -87,4 +87,6 @@ func enableLog() {
 
 	// Write some log messages
 	log.Println("Starting application...")
+
+	return logger
 }
