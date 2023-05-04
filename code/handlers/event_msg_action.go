@@ -3,6 +3,8 @@ package handlers
 import (
 	"github.com/k0kubun/pp/v3"
 	"log"
+	"start-feishubot/initialization"
+	"start-feishubot/services/accesscontrol"
 	"start-feishubot/services/chatgpt"
 	"start-feishubot/services/openai"
 	"time"
@@ -13,6 +15,15 @@ type MessageAction struct { /*消息*/
 }
 
 func (m *MessageAction) Execute(a *ActionInfo) bool {
+
+	// Add access control
+	globalConfig := initialization.GetConfig()
+	if globalConfig.AccessControlEnable && !accesscontrol.AllowAccess(&a.info.userId) {
+		log.Printf("UserId: %s has accessed max count today!", a.info.userId)
+
+		return false
+	}
+
 	cardId, err2 := sendOnProcess(a)
 	if err2 != nil {
 		return false
