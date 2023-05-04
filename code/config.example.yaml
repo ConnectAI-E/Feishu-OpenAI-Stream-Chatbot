@@ -27,3 +27,8 @@ AZURE_RESOURCE_NAME: xxxx   # you can find in endpoint url. Usually looks like h
 AZURE_DEPLOYMENT_NAME: xxxx # usually looks like ...openai.azure.com/openai/deployments/{DEPLOYMENT_NAME}/chat/completions.
 AZURE_OPENAI_TOKEN: xxxx  # Authentication key. We can use Azure Active Directory Authentication(TBD).
 
+## 访问控制
+# 是否启用访问控制。默认不启用。
+ACCESS_CONTROL_ENABLE: false
+# 每个用户每天最多问多少个问题。默认为不限制. 配置成为小于等于0表示不限制。
+ACCESS_CONTROL_MAX_COUNT_PER_USER_PER_DAY: 0
