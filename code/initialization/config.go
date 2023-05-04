@@ -44,8 +44,7 @@ var (
 )
 
 /*
-GetConfig
-Load config from config.yaml and return a global singleton
+GetConfig will call LoadConfig once and return a global singleton, you should always use this function to get config
 */
 func GetConfig() *Config {
 
@@ -58,8 +57,8 @@ func GetConfig() *Config {
 }
 
 /*
-LoadConfig
-Should Only load once
+LoadConfig will load config and should only be called once, you should always use GetConfig to get config rather than
+call this function directly
 */
 func LoadConfig(cfg string) *Config {
 	viper.SetConfigFile(cfg)

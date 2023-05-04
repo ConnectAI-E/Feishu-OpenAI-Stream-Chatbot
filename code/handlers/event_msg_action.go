@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"github.com/k0kubun/pp/v3"
 	"log"
 	"start-feishubot/initialization"
@@ -17,12 +18,25 @@ type MessageAction struct { /*消息*/
 func (m *MessageAction) Execute(a *ActionInfo) bool {
 
 	// Add access control
-	globalConfig := initialization.GetConfig()
-	if globalConfig.AccessControlEnable && !accesscontrol.AllowAccess(&a.info.userId) {
-		log.Printf("UserId: %s has accessed max count today!", a.info.userId)
+	if !accesscontrol.CheckAllowAccessThenIncrement(&a.info.userId) {
 
+		msg := fmt.Sprintf("UserId: 【%s】 has accessed max count today! Max access count today %s: 【%d】",
+			a.info.userId, accesscontrol.GetCurrentDateFlag(), initialization.GetConfig().AccessControlMaxCountPerUserPerDay)
+
+		//newCard, _ := newSendCardWithOutHeader(withNote(msg))
+		//_, err := replyCardWithBackId(*a.ctx, a.info.msgId, newCard)
+		//if err != nil {
+		//	log.Println(err)
+		//}
+		//return false
+
+		_ = sendMsg(*a.ctx, msg, a.info.chatId)
 		return false
 	}
+
+	//_ = sendMsg(*a.ctx, "快速响应，用于测试： "+time.Now().String()+
+	//	" accesscontrol.currentDate "+accesscontrol.GetCurrentDateFlag(), a.info.chatId)
+	//return false
 
 	cardId, err2 := sendOnProcess(a)
 	if err2 != nil {
@@ -51,6 +65,7 @@ func (m *MessageAction) Execute(a *ActionInfo) bool {
 			if err := recover(); err != nil {
 				err := updateFinalCard(*a.ctx, "聊天失败", cardId)
 				if err != nil {
+					printErrorMessage(a, msg, err)
 					return
 				}
 			}
@@ -61,6 +76,7 @@ func (m *MessageAction) Execute(a *ActionInfo) bool {
 		if err := m.chatgpt.StreamChat(*a.ctx, msg, chatResponseStream); err != nil {
 			err := updateFinalCard(*a.ctx, "聊天失败", cardId)
 			if err != nil {
+				printErrorMessage(a, msg, err)
 				return
 			}
 			close(done) // 关闭 done 信号
@@ -78,6 +94,7 @@ func (m *MessageAction) Execute(a *ActionInfo) bool {
 			case <-ticker.C:
 				err := updateTextCard(*a.ctx, answer, cardId)
 				if err != nil {
+					printErrorMessage(a, msg, err)
 					return
 				}
 			}
@@ -96,6 +113,7 @@ func (m *MessageAction) Execute(a *ActionInfo) bool {
 		case <-done: // 添加 done 信号的处理
 			err := updateFinalCard(*a.ctx, answer, cardId)
 			if err != nil {
+				printErrorMessage(a, msg, err)
 				return false
 			}
 			ticker.Stop()
@@ -110,10 +128,14 @@ func (m *MessageAction) Execute(a *ActionInfo) bool {
 			//	//updateNewTextCard(*a.ctx, a.info.sessionId, a.info.msgId,
 			//	//	completions.Content)
 			//}
-			log.Printf("UserId: %s , Request: %s , Response: %s", a.info.userId, msg, answer)
+			log.Printf("Success request: UserId: %s , Request: %s , Response: %s", a.info.userId, msg, answer)
 			return false
 		}
 	}
+}
+
+func printErrorMessage(a *ActionInfo, msg []openai.Messages, err error) {
+	log.Printf("Failed request: UserId: %s , Request: %s , Err: %s", a.info.userId, msg, err)
 }
 
 func sendOnProcess(a *ActionInfo) (*string, error) {
