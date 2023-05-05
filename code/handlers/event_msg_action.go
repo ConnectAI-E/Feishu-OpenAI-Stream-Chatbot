@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/k0kubun/pp/v3"
 	"log"
@@ -8,6 +9,7 @@ import (
 	"start-feishubot/services/accesscontrol"
 	"start-feishubot/services/chatgpt"
 	"start-feishubot/services/openai"
+	"strings"
 	"time"
 )
 
@@ -18,24 +20,20 @@ type MessageAction struct { /*消息*/
 func (m *MessageAction) Execute(a *ActionInfo) bool {
 
 	// Add access control
-	if !accesscontrol.CheckAllowAccessThenIncrement(&a.info.userId) {
+	if initialization.GetConfig().AccessControlEnable &&
+		!accesscontrol.CheckAllowAccessThenIncrement(&a.info.userId) {
 
 		msg := fmt.Sprintf("UserId: 【%s】 has accessed max count today! Max access count today %s: 【%d】",
 			a.info.userId, accesscontrol.GetCurrentDateFlag(), initialization.GetConfig().AccessControlMaxCountPerUserPerDay)
-
-		//newCard, _ := newSendCardWithOutHeader(withNote(msg))
-		//_, err := replyCardWithBackId(*a.ctx, a.info.msgId, newCard)
-		//if err != nil {
-		//	log.Println(err)
-		//}
-		//return false
 
 		_ = sendMsg(*a.ctx, msg, a.info.chatId)
 		return false
 	}
 
-	//_ = sendMsg(*a.ctx, "快速响应，用于测试： "+time.Now().String()+
-	//	" accesscontrol.currentDate "+accesscontrol.GetCurrentDateFlag(), a.info.chatId)
+	//s := "快速响应，用于测试： " + time.Now().String() +
+	//	" accesscontrol.currentDate " + accesscontrol.GetCurrentDateFlag()
+	//_ = sendMsg(*a.ctx, s, a.info.chatId)
+	//log.Println(s)
 	//return false
 
 	cardId, err2 := sendOnProcess(a)
@@ -128,7 +126,17 @@ func (m *MessageAction) Execute(a *ActionInfo) bool {
 			//	//updateNewTextCard(*a.ctx, a.info.sessionId, a.info.msgId,
 			//	//	completions.Content)
 			//}
+			log.Printf("\n\n\n")
 			log.Printf("Success request: UserId: %s , Request: %s , Response: %s", a.info.userId, msg, answer)
+			jsonByteArray, err := json.Marshal(msg)
+			if err != nil {
+				log.Printf("Error marshaling JSON request: UserId: %s , Request: %s , Response: %s", a.info.userId, jsonByteArray, answer)
+			}
+			jsonStr := strings.ReplaceAll(string(jsonByteArray), "\\n", "")
+			jsonStr = strings.ReplaceAll(jsonStr, "\n", "")
+			log.Printf("\n\n\n")
+			log.Printf("Success request plain jsonStr: UserId: %s , Request: %s , Response: %s",
+				a.info.userId, jsonStr, answer)
 			return false
 		}
 	}
