@@ -23,8 +23,12 @@ func CheckAllowAccessThenIncrement(userId *string) bool {
 	}
 
 	if CheckAllowAccess(userId) {
-		accessedCount, _ := accessCountMap.Load(*userId)
-		accessCountMap.Store(*userId, accessedCount.(int)+1)
+		accessedCount, ok := accessCountMap.Load(*userId)
+		if !ok {
+			accessCountMap.Store(*userId, 1)
+		} else {
+			accessCountMap.Store(*userId, accessedCount.(int)+1)
+		}
 		return true
 	} else {
 		return false
@@ -33,9 +37,8 @@ func CheckAllowAccessThenIncrement(userId *string) bool {
 
 func CheckAllowAccess(userId *string) bool {
 
-	if !initialization.GetConfig().AccessControlEnable ||
-		initialization.GetConfig().AccessControlMaxCountPerUserPerDay <= 0 {
-		return false
+	if initialization.GetConfig().AccessControlMaxCountPerUserPerDay <= 0 {
+		return true
 	}
 
 	accessedCount, ok := accessCountMap.Load(*userId)
