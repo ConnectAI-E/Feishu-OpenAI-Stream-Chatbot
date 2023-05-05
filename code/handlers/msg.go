@@ -675,8 +675,11 @@ func updateTextCard(ctx context.Context, msg string,
 	}
 	return nil
 }
-func updateFinalCard(ctx context.Context, msg string,
-	msgId *string) error {
+func updateFinalCard(
+	ctx context.Context,
+	msg string,
+	msgId *string,
+) error {
 	newCard, _ := newSendCardWithOutHeader(
 		withMainText(msg))
 	err := PatchCard(ctx, msgId, newCard)

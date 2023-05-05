@@ -58,7 +58,7 @@ func (c *ChatGPT) StreamChatWithHistory(ctx context.Context, msg []openai.ChatCo
 	client := openai.NewClientWithConfig(config)
 	//pp.Printf("client: %v", client)
 	req := openai.ChatCompletionRequest{
-		Model:       openai.GPT3Dot5Turbo,
+		Model:       c.config.OpenaiModel,
 		Messages:    msg,
 		N:           1,
 		Temperature: 0.7,
