@@ -19,6 +19,8 @@ KEY_FILE: key.pem
 API_URL: https://api.openai.com
 # 代理设置, 例如 "http://127.0.0.1:7890", ""代表不使用代理
 HTTP_PROXY: ""
+# 访问OpenAi的 普通 Http请求的超时时间，单位秒，不配置的话默认为 550 秒
+OPENAI_HTTP_CLIENT_TIMEOUT:
 
 # AZURE OPENAI
 AZURE_ON: true # set to true to use Azure rather than OpenAI

@@ -38,3 +38,5 @@ services:
       - ACCESS_CONTROL_ENABLE=false
       # 每个用户每天最多问多少个问题。默认为0. 配置成为小于等于0表示不限制。
       - ACCESS_CONTROL_MAX_COUNT_PER_USER_PER_DAY=0
+      # 访问OpenAi的 普通 Http请求的超时时间，单位秒，不配置的话默认为 550 秒
+      - OPENAI_HTTP_CLIENT_TIMEOUT

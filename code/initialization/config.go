@@ -35,6 +35,7 @@ type Config struct {
 	AzureOpenaiToken                   string
 	AccessControlEnable                bool
 	AccessControlMaxCountPerUserPerDay int
+	OpenAIHttpClientTimeOut            int
 }
 
 var (
@@ -92,6 +93,7 @@ func LoadConfig(cfg string) *Config {
 		AzureOpenaiToken:                   getViperStringValue("AZURE_OPENAI_TOKEN", ""),
 		AccessControlEnable:                getViperBoolValue("ACCESS_CONTROL_ENABLE", false),
 		AccessControlMaxCountPerUserPerDay: getViperIntValue("ACCESS_CONTROL_MAX_COUNT_PER_USER_PER_DAY", 0),
+		OpenAIHttpClientTimeOut:            getViperIntValue("OPENAI_HTTP_CLIENT_TIMEOUT", 550),
 	}
 
 	return config
