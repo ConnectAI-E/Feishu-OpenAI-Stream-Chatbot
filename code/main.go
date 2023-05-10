@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	larkcard "github.com/larksuite/oapi-sdk-go/v3/card"
 	larkim "github.com/larksuite/oapi-sdk-go/v3/service/im/v1"
@@ -26,6 +27,11 @@ func main() {
 	initialization.InitRoleList()
 	pflag.Parse()
 	globalConfig := initialization.GetConfig()
+
+	// 打印一下实际读取到的配置
+	globalConfigPrettyString, _ := json.MarshalIndent(globalConfig, "", "    ")
+	log.Println(string(globalConfigPrettyString))
+
 	initialization.LoadLarkClient(*globalConfig)
 	gpt := openai.NewChatGPT(*globalConfig)
 	handlers.InitHandlers(gpt, *globalConfig)
