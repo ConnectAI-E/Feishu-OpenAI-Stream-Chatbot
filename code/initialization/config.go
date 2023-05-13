@@ -36,6 +36,7 @@ type Config struct {
 	AccessControlEnable                bool
 	AccessControlMaxCountPerUserPerDay int
 	OpenAIHttpClientTimeOut            int
+	OpenaiModel                        string
 }
 
 var (
@@ -94,6 +95,7 @@ func LoadConfig(cfg string) *Config {
 		AccessControlEnable:                getViperBoolValue("ACCESS_CONTROL_ENABLE", false),
 		AccessControlMaxCountPerUserPerDay: getViperIntValue("ACCESS_CONTROL_MAX_COUNT_PER_USER_PER_DAY", 0),
 		OpenAIHttpClientTimeOut:            getViperIntValue("OPENAI_HTTP_CLIENT_TIMEOUT", 550),
+		OpenaiModel:                        getViperStringValue("OPENAI_MODEL", "gpt-3.5-turbo"),
 	}
 
 	return config

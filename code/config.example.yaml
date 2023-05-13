@@ -21,6 +21,8 @@ API_URL: https://api.openai.com
 HTTP_PROXY: ""
 # 访问OpenAi的 普通 Http请求的超时时间，单位秒，不配置的话默认为 550 秒
 OPENAI_HTTP_CLIENT_TIMEOUT:
+# openai 指定模型, 更多见 https://platform.openai.com/docs/models/model-endpoint-compatibility 中 /v1/chat/completions
+OPENAI_MODEL: gpt-3.5-turbo
 
 # AZURE OPENAI
 AZURE_ON: true # set to true to use Azure rather than OpenAI
