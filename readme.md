@@ -366,3 +366,7 @@ grep "UserId" app.log | wc -l
 
 😚 谢谢你啦 😚
 
+## 赞助感谢
+
+友情感谢 'Find My AI' 提供的部分经费赞助！
+
