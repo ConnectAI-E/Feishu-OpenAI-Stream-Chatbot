@@ -73,8 +73,8 @@
 <br>
 
 ```bash
-git clone git@github.com:Leizhenpeng/feishu-chatgpt.git
-cd feishu-chatgpt/code
+git clone https://github.com/ConnectAI-E/Feishu-OpenAI-Stream-Chatbot.git
+cd Feishu-OpenAI-Stream-Chatbot/code
 ```
 
 如果你的服务器没有公网 IP，可以使用反向代理的方式
